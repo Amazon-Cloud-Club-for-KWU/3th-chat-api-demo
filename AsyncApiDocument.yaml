@@ -1,114 +1,84 @@
-asyncapi: '3.0.0'
+asyncapi: '2.6.0'
 info:
   title: 3th Chat Server WebSocket API
   version: '1.0.0'
   description: |
     실시간 채팅 서버의 WebSocket API 문서입니다.
     STOMP 프로토콜을 사용하여 채팅방 입장, 메시지 송수신, 퇴장 기능을 제공합니다.
-  
+
 servers:
   development:
-    host: localhost:8080
+    url: ws://localhost:8080/ws-chat
     protocol: ws
-    description: 개발 서버
-    pathname: /ws-chat
+    description: 개발 환경 웹소켓 서버
+
+defaultContentType: application/json
 
 channels:
   # 메시지 전송 채널
   /pub/chat/send:
-    address: /pub/chat/send
-    messages:
-      sendMessage:
-        $ref: '#/components/messages/SendMessage'
     description: 채팅 메시지를 전송하는 채널
+    publish:
+      operationId: sendChatMessage
+      summary: 채팅 메시지 전송
+      description: 특정 채팅방에 메시지를 전송합니다.
+      security:
+        - jwtAuth: []
+      message:
+        $ref: '#/components/messages/SendMessage'
 
   # 채팅방 입장 채널
   /pub/chat/join/{roomId}:
-    address: /pub/chat/join/{roomId}
+    description: 특정 채팅방에 입장하는 채널
     parameters:
       roomId:
         $ref: '#/components/parameters/RoomId'
-    messages:
-      joinRoom:
+    publish:
+      operationId: joinChatRoom
+      summary: 채팅방 입장
+      description: 특정 채팅방에 입장합니다.
+      security:
+        - jwtAuth: []
+      message:
         $ref: '#/components/messages/JoinRoom'
-    description: 특정 채팅방에 입장하는 채널
 
   # 채팅방 퇴장 채널
   /pub/chat/leave/{roomId}:
-    address: /pub/chat/leave/{roomId}
+    description: 특정 채팅방에서 퇴장하는 채널
     parameters:
       roomId:
         $ref: '#/components/parameters/RoomId'
-    messages:
-      leaveRoom:
+    publish:
+      operationId: leaveChatRoom
+      summary: 채팅방 퇴장
+      description: 특정 채팅방에서 퇴장합니다.
+      security:
+        - jwtAuth: []
+      message:
         $ref: '#/components/messages/LeaveRoom'
-    description: 특정 채팅방에서 퇴장하는 채널
 
   # 채팅방 메시지 구독 채널
   /sub/chat/room/{roomId}:
-    address: /sub/chat/room/{roomId}
+    description: 특정 채팅방의 메시지를 구독하는 채널
     parameters:
       roomId:
         $ref: '#/components/parameters/RoomId'
-    messages:
-      chatMessage:
+    subscribe:
+      operationId: receiveChatMessage
+      summary: 채팅 메시지 수신
+      description: 구독한 채팅방에서 메시지를 수신합니다.
+      message:
         $ref: '#/components/messages/ChatMessage'
-    description: 특정 채팅방의 메시지를 구독하는 채널
 
   # 개인 구독 해제 명령 채널
   /user/queue/unsubscribe:
-    address: /user/queue/unsubscribe
-    messages:
-      unsubscribeCommand:
-        $ref: '#/components/messages/UnsubscribeCommand'
     description: 개인에게 구독 해제 명령을 전송하는 채널
-
-operations:
-  # 메시지 전송
-  sendChatMessage:
-    action: send
-    channel:
-      $ref: '#/channels/~1pub~1chat~1send'
-    summary: 채팅 메시지 전송
-    description: 특정 채팅방에 메시지를 전송합니다.
-    security:
-      - jwtAuth: []
-
-  # 채팅방 입장
-  joinChatRoom:
-    action: send
-    channel:
-      $ref: '#/channels/~1pub~1chat~1join~1{roomId}'
-    summary: 채팅방 입장
-    description: 특정 채팅방에 입장합니다.
-    security:
-      - jwtAuth: []
-
-  # 채팅방 퇴장
-  leaveChatRoom:
-    action: send
-    channel:
-      $ref: '#/channels/~1pub~1chat~1leave~1{roomId}'
-    summary: 채팅방 퇴장
-    description: 특정 채팅방에서 퇴장합니다.
-    security:
-      - jwtAuth: []
-
-  # 채팅 메시지 수신
-  receiveChatMessage:
-    action: receive
-    channel:
-      $ref: '#/channels/~1sub~1chat~1room~1{roomId}'
-    summary: 채팅 메시지 수신
-    description: 구독한 채팅방에서 메시지를 수신합니다.
-
-  # 구독 해제 명령 수신
-  receiveUnsubscribeCommand:
-    action: receive
-    channel:
-      $ref: '#/channels/~1user~1queue~1unsubscribe'
-    summary: 구독 해제 명령 수신
-    description: 서버에서 보낸 구독 해제 명령을 수신합니다.
+    subscribe:
+      operationId: receiveUnsubscribeCommand
+      summary: 구독 해제 명령 수신
+      description: 서버에서 보낸 구독 해제 명령을 수신합니다.
+      message:
+        $ref: '#/components/messages/UnsubscribeCommand'
 
 components:
   messages:
@@ -205,9 +175,6 @@ components:
       schema:
         type: string
         pattern: '^[0-9]+$'
-      examples:
-        - "1"
-        - "123"
 
   securitySchemes:
     jwtAuth:
@@ -217,20 +184,3 @@ components:
       description: |
         JWT 토큰을 사용한 인증입니다.
         STOMP 연결 시 헤더에 Authorization: Bearer <token> 형태로 전송해야 합니다.
-
-  connections:
-    websocket:
-      protocol: websocket
-      protocolVersion: '13'
-      
-  servers:
-    development:
-      host: localhost:8080
-      protocol: ws
-      description: 개발 환경 웹소켓 서버
-      
-defaultContentType: application/json
-
-externalDocs:
-  description: STOMP 프로토콜 문서
-  url: https://stomp.github.io/stomp-specification-1.2.html
