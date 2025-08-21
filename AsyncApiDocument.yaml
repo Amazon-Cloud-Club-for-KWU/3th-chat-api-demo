@@ -1,4 +1,4 @@
-asyncapi: '2.6.0'
+asyncapi: '2.3.0'
 info:
   title: 3th Chat Server WebSocket API
   version: '1.0.0'
@@ -22,8 +22,6 @@ channels:
       operationId: sendChatMessage
       summary: 채팅 메시지 전송
       description: 특정 채팅방에 메시지를 전송합니다.
-      security:
-        - jwtAuth: []
       message:
         $ref: '#/components/messages/SendMessage'
 
@@ -37,8 +35,6 @@ channels:
       operationId: joinChatRoom
       summary: 채팅방 입장
       description: 특정 채팅방에 입장합니다.
-      security:
-        - jwtAuth: []
       message:
         $ref: '#/components/messages/JoinRoom'
 
@@ -52,8 +48,6 @@ channels:
       operationId: leaveChatRoom
       summary: 채팅방 퇴장
       description: 특정 채팅방에서 퇴장합니다.
-      security:
-        - jwtAuth: []
       message:
         $ref: '#/components/messages/LeaveRoom'
 
@@ -184,3 +178,6 @@ components:
       description: |
         JWT 토큰을 사용한 인증입니다.
         STOMP 연결 시 헤더에 Authorization: Bearer <token> 형태로 전송해야 합니다.
+
+security:
+  - jwtAuth: []
