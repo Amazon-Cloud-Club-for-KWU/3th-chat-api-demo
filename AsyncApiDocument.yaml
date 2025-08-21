@@ -178,6 +178,3 @@ components:
       description: |
         JWT 토큰을 사용한 인증입니다.
         STOMP 연결 시 헤더에 Authorization: Bearer <token> 형태로 전송해야 합니다.
-
-security:
-  - jwtAuth: []
