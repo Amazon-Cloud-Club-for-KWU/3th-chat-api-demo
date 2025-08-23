@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 
 
 @Entity
+@Table(name = "chat_messages", indexes = {
+        @Index(name = "idx_created_at", columnList = "created_at")
+})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -20,7 +23,7 @@ public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id", nullable = false)
     private ChatRoom chatRoom;
 
@@ -33,5 +36,5 @@ public class ChatMessage {
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

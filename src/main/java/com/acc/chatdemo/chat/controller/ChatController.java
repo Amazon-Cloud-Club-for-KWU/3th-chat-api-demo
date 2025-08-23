@@ -1,13 +1,14 @@
 package com.acc.chatdemo.chat.controller;
 
-import com.acc.chatdemo.chat.dto.CreateChatMessageDto;
+import com.acc.chatdemo.chat.dto.ChatMessageDto;
+import com.acc.chatdemo.chat.dto.ChatRoomDto;
 import com.acc.chatdemo.chat.dto.CreateChatRoomDto;
 import com.acc.chatdemo.chat.entity.ChatMessage;
 import com.acc.chatdemo.chat.entity.ChatRoom;
 import com.acc.chatdemo.chat.service.ChatMessageService;
 import com.acc.chatdemo.chat.service.ChatRoomService;
-import com.acc.chatdemo.common.PaginationResponse;
-import com.acc.chatdemo.common.PaginationResponseBuilder;
+import com.acc.chatdemo.common.dto.PaginationResponse;
+import com.acc.chatdemo.common.dto.PaginationResponseBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
 
     @GetMapping
-    public ResponseEntity<PaginationResponse<ChatRoom>> getChatRooms(
+    public ResponseEntity<PaginationResponse<ChatRoomDto>> getChatRooms(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
@@ -29,7 +30,7 @@ public class ChatController {
         // The actual implementation would involve calling a service method to fetch the chat rooms.
         // For now, we return an empty page as a placeholder.
         Page<ChatRoom> chatRooms = chatRoomService.getChatRooms(page, size);
-        PaginationResponse<ChatRoom> response = PaginationResponseBuilder.build(chatRooms);
+        PaginationResponse<ChatRoomDto> response = PaginationResponseBuilder.build(chatRooms, ChatRoomDto::toDto);
         return ResponseEntity.ok(response);
     }
 
@@ -43,7 +44,7 @@ public class ChatController {
     }
 
     @GetMapping("{chatRoomId}/messages")
-    public ResponseEntity<PaginationResponse<ChatMessage>> getMessages(
+    public ResponseEntity<PaginationResponse<ChatMessageDto>> getMessages(
             @PathVariable Long chatRoomId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -52,7 +53,7 @@ public class ChatController {
         // The actual implementation would involve calling a service method to fetch the messages.
         // For now, we return an empty page as a placeholder.
         Page<ChatMessage> messages = chatMessageService.getChatMessagesByChatRoomId(chatRoomId, page, size);
-        PaginationResponse<ChatMessage> response = PaginationResponseBuilder.build(messages);
+        PaginationResponse<ChatMessageDto> response = PaginationResponseBuilder.build(messages, ChatMessageDto::toDto);
         return ResponseEntity.ok(response);
     }
 

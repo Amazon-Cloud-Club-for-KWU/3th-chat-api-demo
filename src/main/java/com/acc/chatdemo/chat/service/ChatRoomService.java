@@ -90,12 +90,6 @@ public class ChatRoomService {
 
     @Transactional
     public void joinChatRoom(Long chatRoomId, Long userId) {
-        ChatRoom chatRoom = getChatRoomById(chatRoomId);
-        User user = userService.getUserById(userId);
-
-        if (chatRoomMemberRepository.existsByChatRoomAndUser(chatRoom, user)) {
-            throw new RuntimeException("User is already a member of the chat room with id: " + chatRoomId);
-        }
 
         upsertChatRoomMember(chatRoomId, userId);
 

@@ -22,14 +22,24 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
     @Override
     public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-        if(StompCommand.CONNECT.equals(accessor.getCommand())) {
+        
+        if (StompCommand.CONNECT.equals(accessor.getCommand()) || 
+            StompCommand.SEND.equals(accessor.getCommand()) ||
+            StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+            
             String token = accessor.getFirstNativeHeader("Authorization");
             if (token != null && token.startsWith("Bearer ")) {
-                String userId = jwtProvider.parseUserIdFromAccessToken(token.substring(7)).toString();
-
-                UserDetails userDetails = userDetailService.loadUserByUsername(userId);
-                accessor.setUser(new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()));
-            } else {
+                try {
+                    String userId = jwtProvider.parseUserIdFromAccessToken(token.substring(7)).toString();
+                    UserDetails userDetails = userDetailService.loadUserByUsername(userId);
+                    accessor.setUser(new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()));
+                } catch (Exception e) {
+                    System.err.println("JWT 파싱 오류: " + e.getMessage());
+                    if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+                        throw new IllegalArgumentException("Invalid JWT token: " + e.getMessage());
+                    }
+                }
+            } else if (StompCommand.CONNECT.equals(accessor.getCommand())) {
                 throw new IllegalArgumentException("Invalid or missing Authorization header");
             }
         }

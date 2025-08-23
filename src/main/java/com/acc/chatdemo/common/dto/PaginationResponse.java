@@ -1,4 +1,4 @@
-package com.acc.chatdemo.common;
+package com.acc.chatdemo.common.dto;
 
 import lombok.Data;
 

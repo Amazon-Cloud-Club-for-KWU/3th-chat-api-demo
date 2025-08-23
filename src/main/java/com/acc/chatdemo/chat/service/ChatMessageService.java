@@ -16,6 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class ChatMessageService {
@@ -47,7 +49,9 @@ public class ChatMessageService {
 
         ChatMessage chatMessage = ChatMessage.builder()
                 .content(dto.getContent())
+                .sender(sender)
                 .chatRoom(chatRoom)
+                .createdAt(LocalDateTime.now())
                 .build();
 
         chatRoom.setLastMessage(chatMessage);
