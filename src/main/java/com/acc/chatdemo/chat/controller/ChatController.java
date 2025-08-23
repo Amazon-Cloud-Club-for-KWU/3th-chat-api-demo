@@ -35,12 +35,12 @@ public class ChatController {
     }
 
     @GetMapping("{chatRoomId}")
-    public ResponseEntity<ChatRoom> getChatRoom(@PathVariable Long chatRoomId) {
+    public ResponseEntity<ChatRoomDto> getChatRoom(@PathVariable Long chatRoomId) {
         // This method should return the chat room details for the given chat room ID.
         // The actual implementation would involve calling a service method to fetch the chat room details.
         // For now, we return a placeholder string
         ChatRoom chatRoom = chatRoomService.getChatRoomById(chatRoomId);
-        return ResponseEntity.ok(chatRoom);
+        return ResponseEntity.ok(ChatRoomDto.toDto(chatRoom));
     }
 
     @GetMapping("{chatRoomId}/messages")
@@ -58,22 +58,22 @@ public class ChatController {
     }
 
     @PostMapping
-    public ResponseEntity<ChatRoom> createChatRoom(
+    public ResponseEntity<ChatRoomDto> createChatRoom(
             @RequestBody CreateChatRoomDto dto
     ) {
         // This method should create a new chat message in the specified chat room.
         // The actual implementation would involve calling a service method to create the message.
         // For now, we return a placeholder string as a response.
         ChatRoom chatRoom = chatRoomService.createChatRoom(dto.getName());
-        return ResponseEntity.ok(chatRoom);
+        return ResponseEntity.ok(ChatRoomDto.toDto(chatRoom));
     }
 
     @GetMapping("{chatRoomId}/last-message")
-    public ResponseEntity<ChatMessage> getLastMessage(@PathVariable Long chatRoomId) {
+    public ResponseEntity<ChatMessageDto> getLastMessage(@PathVariable Long chatRoomId) {
         // This method should return the last message in the specified chat room.
         // The actual implementation would involve calling a service method to fetch the last message.
         // For now, we return a placeholder string as a response.
         ChatMessage lastMessage = chatRoomService.findLastMessage(chatRoomId);
-        return ResponseEntity.ok(lastMessage);
+        return ResponseEntity.ok(ChatMessageDto.toDto(lastMessage));
     }
 }
