@@ -14,7 +14,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -103,7 +107,13 @@ public class ChatRoomService {
         List<ChatRoomMember> chatRoomMembers = chatRoomMemberRepository.findAllByUser(user);
         return chatRoomMembers.stream()
                 .map(ChatRoomMember::getChatRoom)
-                .sorted((r1, r2) -> r2.getLastMessage().getCreatedAt().compareTo(r1.getLastMessage().getCreatedAt()))
+                .filter(Objects::nonNull)
+                .sorted(Comparator.comparing(
+                        chatRoom -> Optional.ofNullable(chatRoom.getLastMessage())
+                                .map(ChatMessage::getCreatedAt)
+                                .orElse(LocalDateTime.MIN),
+                        Comparator.reverseOrder()
+                ))
                 .toList();
     }
 }
