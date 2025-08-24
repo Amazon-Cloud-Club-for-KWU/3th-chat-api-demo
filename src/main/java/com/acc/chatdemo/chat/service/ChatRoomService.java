@@ -14,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ChatRoomService {
@@ -93,5 +95,15 @@ public class ChatRoomService {
 
         upsertChatRoomMember(chatRoomId, userId);
 
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChatRoom> getJoinedChatRooms(Long userId) {
+        User user = userService.getUserById(userId);
+        List<ChatRoomMember> chatRoomMembers = chatRoomMemberRepository.findAllByUser(user);
+        return chatRoomMembers.stream()
+                .map(ChatRoomMember::getChatRoom)
+                .sorted((r1, r2) -> r2.getLastMessage().getCreatedAt().compareTo(r1.getLastMessage().getCreatedAt()))
+                .toList();
     }
 }

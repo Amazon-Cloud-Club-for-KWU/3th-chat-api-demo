@@ -17,8 +17,10 @@ public class RedisPublisher {
     public void publishMessage(MessageDto message) {
         try {
             String jsonMessage = objectMapper.writeValueAsString(message);
+            
             redisTemplate.convertAndSend(CHANNEL_NAME, jsonMessage);
         } catch (JsonProcessingException e) {
+            System.err.println("메시지 직렬화 오류: " + e.getMessage());
             throw new RuntimeException("메시지 직렬화 오류", e);
         }
     }

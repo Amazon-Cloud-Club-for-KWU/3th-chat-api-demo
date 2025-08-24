@@ -3,6 +3,7 @@ package com.acc.chatdemo.user.service;
 import com.acc.chatdemo.user.dto.CreateUserDto;
 import com.acc.chatdemo.user.entity.User;
 import com.acc.chatdemo.user.repository.UserRepository;
+import com.acc.chatdemo.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+
+    public User getCurrentUser() {
+        Long userId = SecurityUtils.getCurrentUserId();
+
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+    }
 
     public User createUser(CreateUserDto dto) {
         User user = User.builder()

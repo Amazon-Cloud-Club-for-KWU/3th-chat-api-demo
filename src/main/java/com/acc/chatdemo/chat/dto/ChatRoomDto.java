@@ -12,6 +12,9 @@ public class ChatRoomDto {
     private ChatMessageDto lastMessage;
 
     public static ChatRoomDto toDto(ChatRoom chatRoom){
+        if (chatRoom == null) {
+            return null;
+        }
         return ChatRoomDto.builder()
                 .id(chatRoom.getId())
                 .name(chatRoom.getName())

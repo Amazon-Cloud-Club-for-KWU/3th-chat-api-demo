@@ -51,12 +51,9 @@ public class JwtProvider {
 
     public Claims parseClaims(String accessToken) {
         try {
-            System.out.println("Parsing token: " + accessToken);
             Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
-            System.out.println("Claims parsed successfully: " + claims.getSubject());
             return claims;
         } catch (Exception e) {
-            System.out.println("Token parsing failed: " + e.getMessage());
             e.printStackTrace();
             return null;
         }

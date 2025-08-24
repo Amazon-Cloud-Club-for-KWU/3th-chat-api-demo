@@ -27,7 +27,9 @@ public class WebSocketController {
     @MessageMapping("/chat/send")
     public void sendMessage(@Payload CreateChatMessageDto dto, Principal principal, 
                            @Header("Authorization") String authHeader) {
+        
         Long userId = getUserId(principal, authHeader);
+
         chatMessageService.sendMessage(dto, userId);
     }
 

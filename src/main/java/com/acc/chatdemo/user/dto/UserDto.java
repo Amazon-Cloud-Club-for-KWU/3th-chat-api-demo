@@ -11,6 +11,9 @@ public class UserDto {
     private String username;
 
     public static UserDto toDto(User user) {
+        if (user == null) {
+            return null;
+        }
         return UserDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())

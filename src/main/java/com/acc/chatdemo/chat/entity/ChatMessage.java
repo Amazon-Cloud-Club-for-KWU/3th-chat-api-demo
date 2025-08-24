@@ -13,7 +13,11 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "chat_messages", indexes = {
         @Index(name = "idx_created_at", columnList = "created_at")
-})
+},
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_chat_room_seq", columnNames = {"chat_room_id", "seq"})
+}
+)
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -33,6 +37,9 @@ public class ChatMessage {
 
     @Column(nullable = false)
     private String content;
+
+    @Column(nullable = false)
+    private Long seq;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
