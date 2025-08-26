@@ -45,14 +45,16 @@ jobs:
     - name: Deploy to server
       run: |
         # Create SSH key file
-        echo "${{ secrets.INSTANCE_SECRET }}" > ssh_key
+        cat << 'EOF' > ssh_key
+        ${{ secrets.INSTANCE_SECRET }}
+        EOF
         chmod 600 ssh_key
         
         # Copy docker-compose files to server
         scp -i ssh_key -o StrictHostKeyChecking=no deploy/docker-compose.yml deploy/nginx.conf ubuntu@${{ secrets.INSTANCE_IP }}:~/
         
         # SSH to server and deploy
-        ssh -i ssh_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} '
+        ssh -i ssh_key -o StrictHostKeyChecking=no ec2-user@${{ secrets.INSTANCE_IP }} '
           docker-compose down || true
           docker-compose pull
           docker-compose up -d
