@@ -51,7 +51,7 @@ jobs:
         chmod 600 ssh_key
         
         # Copy docker-compose files to server
-        scp -i ssh_key -o StrictHostKeyChecking=no deploy/docker-compose.yml deploy/nginx.conf ubuntu@${{ secrets.INSTANCE_IP }}:~/
+        scp -i ssh_key -o StrictHostKeyChecking=no deploy/docker-compose.yml deploy/nginx.conf ec2-user@${{ secrets.INSTANCE_IP }}:~/
         
         # SSH to server and deploy
         ssh -i ssh_key -o StrictHostKeyChecking=no ec2-user@${{ secrets.INSTANCE_IP }} '
