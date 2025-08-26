@@ -19,4 +19,4 @@ COPY --from=build /workspace/app/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar", "-Dspring.profiles.active=$APP_ENV"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=$APP_ENV", "-jar", "app.jar"]
