@@ -15,9 +15,13 @@ services:
   app1:
     image: litpon92/3th-chat-demo
     container_name: 3th-chat-app1
+    environment:
+      - APP_ENV=prod
     restart: unless-stopped
 
   app2:
     image: litpon92/3th-chat-demo
     container_name: 3th-chat-app2
+    environment:
+      - APP_ENV=prod
     restart: unless-stopped
