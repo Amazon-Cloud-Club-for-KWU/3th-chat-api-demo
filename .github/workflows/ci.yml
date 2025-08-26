@@ -22,7 +22,9 @@ jobs:
         
     - name: Create application-prod.properties
       run: |
-        echo "${{ secrets.PROD_PROPERTIES }}" > src/main/resources/application-prod.properties
+        cat << 'EOF' > src/main/resources/application-prod.properties
+        ${{ secrets.PROD_PROPERTIES }}
+        EOF
         
     - name: Build with Gradle
       run: |
