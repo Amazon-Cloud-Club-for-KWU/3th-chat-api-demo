@@ -55,7 +55,7 @@ jobs:
         
         # SSH to server and deploy
         ssh -i ssh_key -o StrictHostKeyChecking=no ec2-user@${{ secrets.INSTANCE_IP }} '
-          docker-compose down || true
-          docker-compose pull
-          docker-compose up -d
+          sudo docker-compose down || true
+          sudo docker-compose pull
+          sudo docker-compose up -d
         '
