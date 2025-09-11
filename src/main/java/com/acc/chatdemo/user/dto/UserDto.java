@@ -9,14 +9,4 @@ import lombok.Data;
 public class UserDto {
     private Long id;
     private String username;
-
-    public static UserDto toDto(User user) {
-        if (user == null) {
-            return null;
-        }
-        return UserDto.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .build();
-    }
 }
