@@ -34,25 +34,20 @@ public class AuthHttpFilter extends OncePerRequestFilter {
         if (token != null && token.startsWith("Bearer ")) {
             try {
                 token = token.substring(7);
-                System.out.println("Extracted token: " + token);
                 Long userId = jwtProvider.parseUserIdFromAccessToken(token);
-                System.out.println("Parsed userId: " + userId);
-                
+
                 UserDetails userDetails = userDetailService.loadUserByUsername(String.valueOf(userId));
                 if (userDetails != null) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                    System.out.println("Authentication set for user: " + userId);
                 }
             } catch (Exception e) {
-                System.err.println("JWT 토큰 처리 오류: " + e.getMessage());
                 e.printStackTrace();
                 // 토큰이 유효하지 않아도 필터 체인은 계속 진행 (Spring Security가 나중에 인증 실패 처리)
             }
         } else {
-            System.out.println("No valid Authorization header found");
         }
         
         filterChain.doFilter(request, response);

@@ -12,6 +12,7 @@ import com.acc.chatdemo.chat.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class ChatController {
     private final ChatMessageDtoMapper chatMessageDtoMapper;
 
     @GetMapping
-    public ResponseEntity<Page<ChatRoomDto>> getChatRooms(
+    public ResponseEntity<PagedModel<ChatRoomDto>> getChatRooms(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
@@ -40,7 +41,7 @@ public class ChatController {
     }
 
     @GetMapping("{chatRoomId}/messages")
-    public ResponseEntity<Page<ChatMessageDto>> getMessages(
+    public ResponseEntity<PagedModel<ChatMessageDto>> getMessages(
             @PathVariable Long chatRoomId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
