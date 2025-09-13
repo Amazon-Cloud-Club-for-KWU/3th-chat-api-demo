@@ -15,17 +15,4 @@ public class ChatMessageDto {
     private LocalDateTime createdAt;
     private Long seq;
     private UserDto sender;
-
-    public static ChatMessageDto toDto(ChatMessage chatMessage) {
-        if (chatMessage == null) {
-            return null;
-        }
-        return ChatMessageDto.builder()
-                .id(chatMessage.getId())
-                .content(chatMessage.getContent())
-                .seq(chatMessage.getSeq())
-                .createdAt(chatMessage.getCreatedAt())
-                .sender(UserDto.toDto(chatMessage.getSender()))
-                .build();
-    }
 }
