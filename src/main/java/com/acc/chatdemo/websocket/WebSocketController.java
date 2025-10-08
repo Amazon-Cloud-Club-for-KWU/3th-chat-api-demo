@@ -45,10 +45,8 @@ public class WebSocketController {
                          @Header("Authorization") String authHeader) {
         Long userId = getUserId(principal, authHeader);
         
-        // DB에서 멤버십 제거
         chatRoomService.leaveChatRoom(Long.parseLong(roomId), userId);
         
-        // 클라이언트에게 구독 해제 명령 전송
         messagingTemplate.convertAndSendToUser(
             userId.toString(),
             "/queue/unsubscribe", 
@@ -57,12 +55,10 @@ public class WebSocketController {
     }
     
     private Long getUserId(Principal principal, String authHeader) {
-        // Principal이 있으면 사용
         if (principal != null && principal.getName() != null) {
             return Long.parseLong(principal.getName());
         }
         
-        // Principal이 null이면 Authorization 헤더에서 추출
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             return jwtProvider.parseUserIdFromAccessToken(token);
