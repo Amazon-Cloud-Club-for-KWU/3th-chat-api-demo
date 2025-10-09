@@ -1,4 +1,4 @@
-package com.acc.chatdemo.common.swagger;
+package com.acc.chatdemo.common;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;

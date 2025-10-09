@@ -4,6 +4,8 @@ import com.acc.chatdemo.chat.dto.CreateChatMessageDto;
 import com.acc.chatdemo.chat.service.ChatMessageService;
 import com.acc.chatdemo.chat.service.ChatRoomService;
 import com.acc.chatdemo.redis.RedisPublisher;
+import com.acc.chatdemo.websocket.dto.JoinChatRoomDto;
+import com.acc.chatdemo.websocket.dto.LeaveChatRoomDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Header;
@@ -33,24 +35,24 @@ public class WebSocketController {
         chatMessageService.sendMessage(dto, userId);
     }
 
-    @MessageMapping("/chat/join/{roomId}")
-    public void joinRoom(@DestinationVariable String roomId, Principal principal,
-                        @Header("Authorization") String authHeader) {
+    @MessageMapping("/chat/join")
+    public void joinRoom(Principal principal, @Header("Authorization") String authHeader,
+                         @Payload JoinChatRoomDto dto) {
         Long userId = getUserId(principal, authHeader);
-        chatRoomService.joinChatRoom(Long.parseLong(roomId), userId);
+        chatRoomService.joinChatRoom(dto.getRoomId(), userId);
     }
 
-    @MessageMapping("/chat/leave/{roomId}")
-    public void leaveRoom(@DestinationVariable String roomId, Principal principal,
-                         @Header("Authorization") String authHeader) {
+    @MessageMapping("/chat/leave")
+    public void leaveRoom(Principal principal, @Header("Authorization") String authHeader,
+                          @Payload LeaveChatRoomDto dto) {
         Long userId = getUserId(principal, authHeader);
         
-        chatRoomService.leaveChatRoom(Long.parseLong(roomId), userId);
+        chatRoomService.leaveChatRoom(dto.getRoomId(), userId);
         
         messagingTemplate.convertAndSendToUser(
             userId.toString(),
             "/queue/unsubscribe", 
-            roomId
+            dto.getRoomId().toString()
         );
     }
     

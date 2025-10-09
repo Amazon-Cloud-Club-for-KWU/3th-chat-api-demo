@@ -32,7 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/ws-chat/**").permitAll()
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "springwolf/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new AuthHttpFilter(jwtProvider, userDetailService), UsernamePasswordAuthenticationFilter.class)
